@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Auditoría - Guatemala</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .nav-tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 15px 10px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: 600;
+            color: #666;
+            transition: all 0.3s ease;
+            min-width: 120px;
+        }
+
+        .tab-btn.active {
+            background: white;
+            color: #1e3c72;
+            border-bottom: 3px solid #1e3c72;
+        }
+
+        .tab-btn:hover {
+            background: #e9ecef;
+        }
+
+        .tab-btn.restricted {
+            opacity: 0.5;
+            pointer-events: none;
+            background: #f5f5f5;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 30px;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .login-container {
+            max-width: 400px;
+            margin: 50px auto;
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .user-role-selector {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .role-btn {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .role-btn.selected {
+            border-color: #1e3c72;
+            background: #f0f4ff;
+            color: #1e3c72;
+            transform: scale(1.02);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 1em;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background: #dc3545;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+        }
+
+        .user-info {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .alert {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 5px solid;
+        }
+
+        .alert-info {
+            background: #e7f3ff;
+            border-left-color: #0066cc;
+            color: #004499;
+        }
+
+        .alert-success {
+            background: #e7f6e7;
+            border-left-color: #28a745;
+            color: #1a5928;
+        }
+
+        .alert-warning {
+            background: #fff8e1;
+            border-left-color: #ffc107;
+            color: #b8860b;
+        }
+
+        .section {
+            margin-bottom: 30px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            border-left: 5px solid #1e3c72;
+        }
+
+        .section h3 {
+            color: #1e3c72;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #1e3c72;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #666;
+            font-weight: 600;
+        }
+
+        .data-item {
+            border: 1px solid #e9ecef;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            background: white;
+        }
+
+        .file-upload-area {
+            border: 2px dashed #1e3c72;
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            background: #f8f9ff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .file-upload-area:hover {
+            background: #f0f4ff;
+        }
+
+        .analysis-card {
+            background: white;
+            border: 1px solid #e9ecef;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .analysis-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f8f9fa;
+        }
+
+        .analysis-content {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .analysis-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+        }
+
+        .analysis-table th, .analysis-table td {
+            padding: 8px 12px;
+            text-align: left;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .analysis-table th {
+            background: #1e3c72;
+            color: white;
+            font-weight: 600;
+        }
+
+        .analysis-table tr:hover {
+            background: #f0f4ff;
+        }
+
+        .progress-analysis {
+            width: 100%;
+            height: 8px;
+            background: #e9ecef;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-analysis-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #28a745, #20c997);
+            transition: width 0.5s ease;
+        }
+
+        .file-preview {
+            max-width: 100%;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+
+        .analysis-tag {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            font-weight: 600;
+            margin: 2px;
+        }
+
+        .tag-pdf { background: #ffebee; color: #c62828; }
+        .tag-excel { background: #e8f5e8; color: #2e7d32; }
+        .tag-image { background: #e3f2fd; color: #1565c0; }
+        .tag-word { background: #fff3e0; color: #ef6c00; }
+
+        @media (max-width: 768px) {
+            .nav-tabs {
+                flex-direction: column;
+            }
+            
+            .user-role-selector {
+                flex-direction: column;
+            }
+            
+            .tab-btn {
+                min-width: auto;
+            }
+
+            .analysis-header {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔍 Sistema de Auditoría Integral</h1>
+            <p>República de Guatemala - Herramienta Profesional de Evaluación</p>
+        </div>
+
+        <div class="nav-tabs">
+            <button class="tab-btn active" onclick="mostrarTab('usuarios')">👥 Usuarios</button>
+            <button class="tab-btn restricted" onclick="mostrarTab('planificacion')">📋 Planificación</button>
+            <button class="tab-btn restricted" onclick="mostrarTab('ejecucion')">⚡ Ejecución</button>
+            <button class="tab-btn restricted" onclick="mostrarTab('evaluacion')">📊 Evaluación</button>
+            <button class="tab-btn restricted" onclick="mostrarTab('informes')">📄 Informes</button>
+            <button class="tab-btn restricted" onclick="mostrarTab('seguimiento')">👁️ Seguimiento</button>
+            <button class="tab-btn restricted" onclick="mostrarTab('archivos')">📁 Archivos</button>
+            <button class="tab-btn restricted" onclick="mostrarTab('analisis')">🔬 Análisis</button>
+        </div>
+
+        <!-- USUARIOS -->
+        <div id="usuarios" class="tab-content active">
+            <div id="login-screen">
+                <div class="login-container">
+                    <h2 style="text-align: center; color: #1e3c72; margin-bottom: 30px;">🔐 Acceso al Sistema</h2>
+                    
+                    <div class="user-role-selector">
+                        <div class="role-btn selected" id="rol-auditor" onclick="selectRol('auditor')">
+                            <div style="font-size: 2em; margin-bottom: 10px;">🔍</div>
+                            <strong>Auditor</strong>
+                            <p style="font-size: 0.9em; margin-top: 5px; color: #666;">Acceso completo</p>
+                        </div>
+                        <div class="role-btn" id="rol-cliente" onclick="selectRol('cliente')">
+                            <div style="font-size: 2em; margin-bottom: 10px;">👥</div>
+                            <strong>Cliente</strong>
+                            <p style="font-size: 0.9em; margin-top: 5px; color: #666;">Vista de seguimiento</p>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Usuario:</label>
+                        <input type="text" id="usuario-input" placeholder="Ingrese su usuario">
+                    </div>
+                    <div class="form-group">
+                        <label>Contraseña:</label>
+                        <input type="password" id="password-input" placeholder="Ingrese su contraseña">
+                    </div>
+                    <button class="btn" onclick="iniciarSesion()" style="width: 100%; margin-bottom: 15px;">Iniciar Sesión</button>
+
+                    <div style="text-align: center; color: #666; font-size: 0.9em;">
+                        <p><strong>Usuarios Demo:</strong></p>
+                        <p>Auditor: admin/admin123 | Cliente: cliente1/cliente123</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="user-dashboard" style="display: none;">
+                <div class="user-info">
+                    <div>
+                        <strong id="usuario-nombre">Usuario</strong>
+                        <br><small id="usuario-rol">Rol</small>
+                    </div>
+                    <button class="btn btn-secondary" onclick="cerrarSesion()">🚪 Cerrar Sesión</button>
+                </div>
+
+                <div class="alert alert-success">
+                    <strong>✅ Sesión Iniciada:</strong> Puede navegar por el sistema según sus permisos.
+                </div>
+
+                <div class="section">
+                    <h3>📊 Panel de Control</h3>
+                    <p>Bienvenido al sistema de auditoría. Use las pestañas superiores para navegar.</p>
+                    <div id="permisos-info"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PLANIFICACIÓN -->
+        <div id="planificacion" class="tab-content">
+            <div class="alert alert-info">
+                <strong>📌 Planificación:</strong> Establece objetivos y metodología de auditoría.
+            </div>
+            <div class="section">
+                <h3>🎯 Información General</h3>
+                <div class="form-group">
+                    <label>Entidad Auditada:</label>
+                    <input type="text" id="entidad-input" placeholder="Nombre de la entidad">
+                </div>
+                <div class="form-group">
+                    <label>Tipo de Auditoría:</label>
+                    <select id="tipo-input">
+                        <option>Auditoría Financiera</option>
+                        <option>Auditoría Operativa</option>
+                        <option>Auditoría de Cumplimiento</option>
+                    </select>
+                </div>
+                <button class="btn" onclick="guardarInfo()">Guardar</button>
+            </div>
+        </div>
+
+        <!-- EJECUCIÓN -->
+        <div id="ejecucion" class="tab-content">
+            <div class="alert alert-warning">
+                <strong>⚡ Ejecución:</strong> Registro de hallazgos y evidencias.
+            </div>
+            <div class="section">
+                <h3>📊 Registrar Hallazgo</h3>
+                <div class="form-group">
+                    <label>Descripción:</label>
+                    <textarea id="hallazgo-input" rows="3" placeholder="Describa el hallazgo"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Severidad:</label>
+                    <select id="severidad-input">
+                        <option>Crítico</option>
+                        <option>Alto</option>
+                        <option>Medio</option>
+                        <option>Bajo</option>
+                    </select>
+                </div>
+                <button class="btn" onclick="agregarHallazgo()">Registrar</button>
+                
+                <div id="hallazgos-container" style="margin-top: 20px;">
+                    <h4>Hallazgos:</h4>
+                    <p style="color: #666;">Los hallazgos aparecerán aquí...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- EVALUACIÓN -->
+        <div id="evaluacion" class="tab-content">
+            <div class="alert alert-success">
+                <strong>📊 Evaluación:</strong> Análisis de evidencias y conclusiones.
+            </div>
+            <div class="section">
+                <h3>📈 Estadísticas</h3>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number" id="total-hallazgos">0</div>
+                        <div class="stat-label">Total Hallazgos</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="criticos-hallazgos">0</div>
+                        <div class="stat-label">Críticos</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="cumplimiento-porcentaje">100</div>
+                        <div class="stat-label">% Cumplimiento</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- INFORMES -->
+        <div id="informes" class="tab-content">
+            <div class="alert alert-info">
+                <strong>📄 Informes:</strong> Recomendaciones y comunicación de resultados.
+            </div>
+            <div class="section">
+                <h3>🎯 Agregar Recomendación</h3>
+                <div class="form-group">
+                    <label>Descripción:</label>
+                    <textarea id="recomendacion-input" rows="3" placeholder="Describa la recomendación"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Prioridad:</label>
+                    <select id="prioridad-input">
+                        <option>Alta</option>
+                        <option>Media</option>
+                        <option>Baja</option>
+                    </select>
+                </div>
+                <button class="btn" onclick="agregarRecomendacion()">Agregar</button>
+                
+                <div id="recomendaciones-container" style="margin-top: 20px;">
+                    <h4>Recomendaciones:</h4>
+                    <p style="color: #666;">Las recomendaciones aparecerán aquí...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SEGUIMIENTO -->
+        <div id="seguimiento" class="tab-content">
+            <div class="alert alert-warning">
+                <strong>👁️ Seguimiento:</strong> Monitoreo de implementación.
+            </div>
+            <div class="section">
+                <h3>📊 Métricas</h3>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number" id="implementadas-count">0/0</div>
+                        <div class="stat-label">Implementadas</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="implementacion-porcentaje">0%</div>
+                        <div class="stat-label">% Implementación</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ARCHIVOS -->
+        <div id="archivos" class="tab-content">
+            <div class="alert alert-info">
+                <strong>📁 Archivos:</strong> Gestión de documentos de evidencia.
+            </div>
+            <div class="section">
+                <h3>📤 Subir Archivos</h3>
+                <div class="file-upload-area" onclick="subirArchivo()">
+                    <div style="font-size: 3em; margin-bottom: 15px;">📄</div>
+                    <h4>Clic para seleccionar archivos</h4>
+                    <p style="color: #666; margin-top: 10px;">PDF, XLSX, JPG, DOCX (Máx. 10MB)</p>
+                    <input type="file" id="file-input" multiple style="display: none;" onchange="procesarArchivos(this.files)">
+                </div>
+                
+                <div id="archivos-container" style="margin-top: 20px;">
+                    <h4>Archivos Subidos:</h4>
+                    <p style="color: #666;">Los archivos aparecerán aquí...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ANÁLISIS DE ARCHIVOS -->
+        <div id="analisis" class="tab-content">
+            <div class="alert alert-success">
+                <strong>🔬 Análisis de Archivos:</strong> Análisis automático y detallado de documentos subidos.
+            </div>
+            
+            <div class="section">
+                <h3>📊 Resumen de Análisis</h3>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number" id="total-archivos-analizados">0</div>
+                        <div class="stat-label">Archivos Analizados</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="total-paginas">0</div>
+                        <div class="stat-label">Total Páginas</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="total-imagenes">0</div>
+                        <div class="stat-label">Imágenes</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="total-hojas-calculo">0</div>
+                        <div class="stat-label">Hojas de Cálculo</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>🔍 Análisis Detallado por Archivo</h3>
+                <div style="margin-bottom: 15px;">
+                    <button class="btn" onclick="analizarTodosArchivos()">🔬 Analizar Todos los Archivos</button>
+                    <button class="btn btn-secondary" onclick="exportarAnalisis()">📤 Exportar Análisis</button>
+                </div>
+                <div id="analisis-detallado" style="margin-top: 20px;">
+                    <p style="color: #666;">Suba archivos y haga clic en "Analizar" para ver los detalles...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var rolActual = 'auditor';
+        var usuarioLogueado = null;
+        var hallazgosData = [];
+        var recomendacionesData = [];
+        var archivosData = [];
+        var analisisData = [];
+
+        var usuariosDB = {
+            'admin': { pass: 'admin123', nombre: 'Admin Principal', tipo: 'auditor' },
+            'auditor1': { pass: 'aud123', nombre: 'María González', tipo: 'auditor' },
+            'cliente1': { pass: 'cliente123', nombre: 'Empresa ABC', tipo: 'cliente' },
+            'cliente2': { pass: 'cli789', nombre: 'Corp XYZ', tipo: 'cliente' }
+        };
+
+        function selectRol(rol) {
+            rolActual = rol;
+            document.getElementById('rol-auditor').classList.remove('selected');
+            document.getElementById('rol-cliente').classList.remove('selected');
+            document.getElementById('rol-' + rol).classList.add('selected');
+        }
+
+        function mostrarTab(tabId) {
+            if (event.target.classList.contains('restricted')) {
+                alert('Sin permisos para esta sección');
+                return;
+            }
+
+            var tabs = document.querySelectorAll('.tab-content');
+            var btns = document.querySelectorAll('.tab-btn');
+            
+            for (var i = 0; i < tabs.length; i++) {
+                tabs[i].classList.remove('active');
+            }
+            for (var i = 0; i < btns.length; i++) {
+                btns[i].classList.remove('active');
+            }
+
+            document.getElementById(tabId).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        function iniciarSesion() {
+            var usuario = document.getElementById('usuario-input').value;
+            var pass = document.getElementById('password-input').value;
+            
+            if (!usuario || !pass) {
+                alert('Complete todos los campos');
+                return;
+            }
+
+            if (usuariosDB[usuario] && usuariosDB[usuario].pass === pass) {
+                if (usuariosDB[usuario].tipo !== rolActual) {
+                    alert('Usuario no corresponde al rol seleccionado');
+                    return;
+                }
+
+                usuarioLogueado = {
+                    user: usuario,
+                    nombre: usuariosDB[usuario].nombre,
+                    tipo: usuariosDB[usuario].tipo
+                };
+
+                document.getElementById('login-screen').style.display = 'none';
+                document.getElementById('user-dashboard').style.display = 'block';
+                document.getElementById('usuario-nombre').textContent = usuarioLogueado.nombre;
+                document.getElementById('usuario-rol').textContent = usuarioLogueado.tipo;
+
+                configurarPermisos();
+                alert('Sesión iniciada correctamente');
+
+                document.getElementById('usuario-input').value = '';
+                document.getElementById('password-input').value = '';
+            } else {
+                alert('Credenciales incorrectas');
+            }
+        }
+
+        function configurarPermisos() {
+            var tabs = document.querySelectorAll('.tab-btn');
+            var permisosDiv = document.getElementById('permisos-info');
+
+            if (usuarioLogueado.tipo === 'auditor') {
+                for (var i = 1; i < tabs.length; i++) {
+                    tabs[i].classList.remove('restricted');
+                }
+                permisosDiv.innerHTML = '<h4>Permisos:</h4><p>✅ Acceso completo a todas las funciones incluyendo análisis de archivos</p>';
+            } else {
+                tabs[1].classList.add('restricted'); // Planificación
+                tabs[2].classList.add('restricted'); // Ejecución
+                for (var i = 3; i < tabs.length; i++) {
+                    tabs[i].classList.remove('restricted'); // Evaluación, Informes, Seguimiento, Archivos, Análisis
+                }
+                permisosDiv.innerHTML = '<h4>Permisos:</h4><p>✅ Evaluación, Informes, Seguimiento, Archivos y Análisis (solo lectura)<br>❌ Sin acceso a Planificación y Ejecución</p>';
+            }
+        }
+
+        function cerrarSesion() {
+            if (confirm('¿Cerrar sesión?')) {
+                usuarioLogueado = null;
+                document.getElementById('login-screen').style.display = 'block';
+                document.getElementById('user-dashboard').style.display = 'none';
+                
+                var tabs = document.querySelectorAll('.tab-btn');
+                for (var i = 1; i < tabs.length; i++) {
+                    tabs[i].classList.add('restricted');
+                }
+                
+                mostrarTab('usuarios');
+                alert('Sesión cerrada');
+            }
+        }
+
+        function guardarInfo() {
+            if (!usuarioLogueado || usuarioLogueado.tipo === 'cliente') {
+                alert('Sin permisos para guardar');
+                return;
+            }
+            
+            var entidad = document.getElementById('entidad-input').value;
+            if (entidad) {
+                alert('Información guardada: ' + entidad);
+            } else {
+                alert('Complete el campo entidad');
+            }
+        }
+
+        function agregarHallazgo() {
+            if (!usuarioLogueado || usuarioLogueado.tipo === 'cliente') {
+                alert('Sin permisos');
+                return;
+            }
+            
+            var desc = document.getElementById('hallazgo-input').value;
+            var sev = document.getElementById('severidad-input').value;
+            
+            if (desc) {
+                var hallazgo = {
+                    id: Date.now(),
+                    descripcion: desc,
+                    severidad: sev,
+                    fecha: new Date().toLocaleDateString(),
+                    auditor: usuarioLogueado.nombre
+                };
+                
+                hallazgosData.push(hallazgo);
+                actualizarHallazgos();
+                actualizarStats();
+                document.getElementById('hallazgo-input').value = '';
+                alert('Hallazgo agregado');
+            } else {
+                alert('Complete la descripción');
+            }
+        }
+
+        function actualizarHallazgos() {
+            var container = document.getElementById('hallazgos-container');
+            var html = '<h4>Hallazgos:</h4>';
+            
+            if (hallazgosData.length === 0) {
+                html += '<p style="color: #666;">No hay hallazgos...</p>';
+            } else {
+                for (var i = 0; i < hallazgosData.length; i++) {
+                    var h = hallazgosData[i];
+                    var color = h.severidad === 'Crítico' ? '#dc3545' : h.severidad === 'Alto' ? '#ffc107' : '#28a745';
+                    html += '<div class="data-item" style="border-left: 4px solid ' + color + '">';
+                    html += '<strong>Hallazgo ' + (i + 1) + '</strong> ';
+                    html += '<span style="background:' + color + '; color:white; padding:2px 8px; border-radius:10px; font-size:0.8em;">' + h.severidad + '</span>';
+                    html += '<p>' + h.descripcion + '</p>';
+                    html += '<small>Fecha: ' + h.fecha + ' | Por: ' + h.auditor + '</small>';
+                    if (usuarioLogueado && usuarioLogueado.tipo === 'auditor') {
+                        html += '<br><button class="btn btn-danger" onclick="eliminarHallazgo(' + h.id + ')" style="font-size:0.8em; padding:4px 8px; margin-top:10px;">Eliminar</button>';
+                    }
+                    html += '</div>';
+                }
+            }
+            container.innerHTML = html;
+        }
+
+        function eliminarHallazgo(id) {
+            if (!usuarioLogueado || usuarioLogueado.tipo === 'cliente') {
+                alert('Sin permisos');
+                return;
+            }
+            
+            if (confirm('¿Eliminar hallazgo?')) {
+                for (var i = 0; i < hallazgosData.length; i++) {
+                    if (hallazgosData[i].id === id) {
+                        hallazgosData.splice(i, 1);
+                        break;
+                    }
+                }
+                actualizarHallazgos();
+                actualizarStats();
+                alert('Hallazgo eliminado');
+            }
+        }
+
+        function actualizarStats() {
+            var total = hallazgosData.length;
+            var criticos = 0;
+            
+            for (var i = 0; i < hallazgosData.length; i++) {
+                if (hallazgosData[i].severidad === 'Crítico') {
+                    criticos++;
+                }
+            }
+            
+            document.getElementById('total-hallazgos').textContent = total;
+            document.getElementById('criticos-hallazgos').textContent = criticos;
+            
+            var cumplimiento = total === 0 ? 100 : Math.max(0, 100 - (criticos * 25 + (total - criticos) * 10));
+            document.getElementById('cumplimiento-porcentaje').textContent = Math.round(cumplimiento);
+        }
+
+        function agregarRecomendacion() {
+            if (!usuarioLogueado || usuarioLogueado.tipo === 'cliente') {
+                alert('Sin permisos');
+                return;
+            }
+            
+            var desc = document.getElementById('recomendacion-input').value;
+            var prio = document.getElementById('prioridad-input').value;
+            
+            if (desc) {
+                var rec = {
+                    id: Date.now(),
+                    descripcion: desc,
+                    prioridad: prio,
+                    fecha: new Date().toLocaleDateString(),
+                    auditor: usuarioLogueado.nombre,
+                    implementada: false
+                };
+                
+                recomendacionesData.push(rec);
+                actualizarRecomendaciones();
+                actualizarSeguimiento();
+                document.getElementById('recomendacion-input').value = '';
+                alert('Recomendación agregada');
+            } else {
+                alert('Complete la descripción');
+            }
+        }
+
+        function actualizarRecomendaciones() {
+            var container = document.getElementById('recomendaciones-container');
+            var html = '<h4>Recomendaciones:</h4>';
+            
+            if (recomendacionesData.length === 0) {
+                html += '<p style="color: #666;">No hay recomendaciones...</p>';
+            } else {
+                for (var i = 0; i < recomendacionesData.length; i++) {
+                    var r = recomendacionesData[i];
+                    var color = r.prioridad === 'Alta' ? '#dc3545' : r.prioridad === 'Media' ? '#ffc107' : '#28a745';
+                    html += '<div class="data-item" style="border-left: 4px solid ' + color + '">';
+                    html += '<strong>Recomendación ' + (i + 1) + '</strong> ';
+                    html += '<span style="background:' + color + '; color:white; padding:2px 8px; border-radius:10px; font-size:0.8em;">' + r.prioridad + '</span>';
+                    if (r.implementada) {
+                        html += ' <span style="background:#28a745; color:white; padding:2px 8px; border-radius:10px; font-size:0.8em;">✅ Implementada</span>';
+                    }
+                    html += '<p>' + r.descripcion + '</p>';
+                    html += '<small>Fecha: ' + r.fecha + ' | Por: ' + r.auditor + '</small>';
+                    if (usuarioLogueado && usuarioLogueado.tipo === 'auditor') {
+                        var btnText = r.implementada ? 'Marcar Pendiente' : 'Marcar Implementada';
+                        html += '<br><button class="btn" onclick="toggleImplementacion(' + r.id + ')" style="font-size:0.8em; padding:4px 8px; margin-top:10px; margin-right:5px;">' + btnText + '</button>';
+                        html += '<button class="btn btn-danger" onclick="eliminarRecomendacion(' + r.id + ')" style="font-size:0.8em; padding:4px 8px;">Eliminar</button>';
+                    }
+                    html += '</div>';
+                }
+            }
+            container.innerHTML = html;
+        }
+
+        function toggleImplementacion(id) {
+            if (!usuarioLogueado || usuarioLogueado.tipo === 'cliente') {
+                alert('Sin permisos');
+                return;
+            }
+            
+            for (var i = 0; i < recomendacionesData.length; i++) {
+                if (recomendacionesData[i].id === id) {
+                    recomendacionesData[i].implementada = !recomendacionesData[i].implementada;
+                    break;
+                }
+            }
+            actualizarRecomendaciones();
+            actualizarSeguimiento();
+            alert('Estado actualizado');
+        }
+
+        function eliminarRecomendacion(id) {
+            if (!usuarioLogueado || usuarioLogueado.tipo === 'cliente') {
+                alert('Sin permisos');
+                return;
+            }
+            
+            if (confirm('¿Eliminar recomendación?')) {
+                for (var i = 0; i < recomendacionesData.length; i++) {
+                    if (recomendacionesData[i].id === id) {
+                        recomendacionesData.splice(i, 1);
+                        break;
+                    }
+                }
+                actualizarRecomendaciones();
+                actualizarSeguimiento();
+                alert('Recomendación eliminada');
+            }
+        }
+
+        function actualizarSeguimiento() {
+            var total = recomendacionesData.length;
+            var implementadas = 0;
+            
+            for (var i = 0; i < recomendacionesData.length; i++) {
+                if (recomendacionesData[i].implementada) {
+                    implementadas++;
+                }
+            }
+            
+            var porcentaje = total === 0 ? 0 : Math.round((implementadas / total) * 100);
+            
+            document.getElementById('implementadas-count').textContent = implementadas + '/' + total;
+            document.getElementById('implementacion-porcentaje').textContent = porcentaje + '%';
+        }
+
+        function subirArchivo() {
+            if (!usuarioLogueado || usuarioLogueado.tipo === 'cliente') {
+                alert('Sin permisos para subir archivos');
+                return;
+            }
+            document.getElementById('file-input').click();
+        }
+
+        function procesarArchivos(files) {
+            if (!usuarioLogueado || usuarioLogueado.tipo === 'cliente') {
+                alert('Sin permisos para subir archivos');
+                return;
+            }
+            
+            if (!files || files.length === 0) return;
+            
+            var archivosSubidos = 0;
+            
+            for (var i = 0; i < files.length; i++) {
+                var file = files[i];
+                if (file.size > 10 * 1024 * 1024) {
+                    alert('Archivo ' + file.name + ' muy grande (máx 10MB)');
+                    continue;
+                }
+                
+                var archivo = {
+                    id: Date.now() + Math.random(),
+                    nombre: file.name,
+                    tamaño: file.size,
+                    tipo: file.type,
+                    fecha: new Date().toLocaleDateString(),
+                    usuario: usuarioLogueado.nombre,
+                    archivo: file // Guardamos el archivo real para análisis
+                };
+                
+                archivosData.push(archivo);
+                archivosSubidos++;
+                
+                // Análisis automático del archivo
+                analizarArchivoAutomatico(archivo);
+            }
+            
+            actualizarArchivos();
+            actualizarEstadisticasAnalisis();
+            alert(archivosSubidos + ' archivo(s) subido(s) y analizados automáticamente');
+        }
+
+        function actualizarArchivos() {
+            var container = document.getElementById('archivos-container');
+            var html = '<h4>Archivos Subidos:</h4>';
+            
+            if (archivosData.length === 0) {
+                html += '<p style="color: #666;">No hay archivos...</p>';
+            } else {
+                for (var i = 0; i < archivosData.length; i++) {
+                    var a = archivosData[i];
+                    var icono = getIconoArchivo(a.tipo);
+                    var tamaño = (a.tamaño / 1024).toFixed(1) + ' KB';
+                    
+                    html += '<div class="data-item">';
+                    html += '<div style="display: flex; align-items: center; gap: 15px;">';
+                    html += '<div style="font-size: 2em;">' + icono + '</div>';
+                    html += '<div style="flex: 1;">';
+                    html += '<strong>' + a.nombre + '</strong><br>';
+                    html += '<small style="color: #666;">' + tamaño + ' • ' + a.fecha + ' • Por: ' + a.usuario + '</small>';
+                    html += '</div>';
+                    if (usuarioLogueado && usuarioLogueado.tipo === 'auditor') {
+                        html += '<button class="btn btn-danger" onclick="eliminarArchivo(' + a.id + ')" style="font-size:0.8em; padding:4px 8px;">Eliminar</button>';
+                    }
+                    html += '</div></div>';
+                }
+            }
+            container.innerHTML = html;
+        }
+
+        function getIconoArchivo(tipo) {
+            if (tipo.includes('pdf')) return '📄';
+            if (tipo.includes('sheet') || tipo.includes('excel')) return '📊';
+            if (tipo.includes('image')) return '🖼️';
+            if (tipo.includes('word')) return '📝';
+            return '📁';
+        }
+
+        function eliminarArchivo(id) {
+            if (!usuarioLogueado || usuarioLogueado.tipo === 'cliente') {
+                alert('Sin permisos');
+                return;
+            }
+            
+            if (confirm('¿Eliminar archivo?')) {
+                for (var i = 0; i < archivosData.length; i++) {
+                    if (archivosData[i].id === id) {
+                        archivosData.splice(i, 1);
+                        break;
+                    }
+                }
+                actualizarArchivos();
+                alert('Archivo eliminado');
+            }
+        }
+
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Sistema cargado correctamente');
+        });
+    </script>
+</body>
+</html>
